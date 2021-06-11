@@ -27,8 +27,12 @@ namespace TsExtractor2
 			//string outPath = $@"D:\yy\tp2\Tsx_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
 			//args = new string[] { $"OutPath={outPath}", $"SourcePath={sourcePath}" };
 
-			string sourcePath = @"D:\UserData\Documents\AppDev\BotanicaStoreBack\BotanicaStoreBack.sln";
-			string[] excludeProjectNames = { "BotanicaStoreBack.Runner" };
+			//string sourcePath = @"D:\UserData\Documents\AppDev\BotanicaStoreBack\BotanicaStoreBack.sln";
+			//string[] excludeProjectNames = { "BotanicaStoreBack.Runner" };
+
+
+			string sourcePath = @"D:\UserData\Documents\AppDev\TsExtractor2\TsExtractor2.sln";
+			string[] excludeProjectNames = { "TsExtractor2" };
 			string outPath = $@"D:\yy\tp2\Tsx_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
 
 

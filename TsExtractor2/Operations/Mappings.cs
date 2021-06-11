@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TsExtractor2.Operations
 {
@@ -18,6 +15,7 @@ namespace TsExtractor2.Operations
 			{ "String", "string"},
 			{ "Char", "string"},
 			{ "Guid", "string"},
+			{ "DateTime", "string"},
 			{ "Boolean", "boolean"}
 		};
 

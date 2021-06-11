@@ -15,6 +15,7 @@ namespace HowdyWorld.Models
 		public byte ValByte { get; set; }
 		public char ValChar { get; set; }
 		public bool ValBool { get; set; }
+		public DateTime ValDateTime { get; set; }
 		public Guid ValGuid { get; set; }
 
 		public long? ValNullableLong { get; set; }
