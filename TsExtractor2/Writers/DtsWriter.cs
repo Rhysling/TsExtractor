@@ -41,7 +41,7 @@ namespace TsExtractor2.Writers
 				sb.AppendLine($"//\t{p}");
 			sb.AppendLine();
 
-			sb.AppendLine("type INullable<T> = T | null;");
+			sb.AppendLine("type INullable<T> = T | null | undefined;");
 			sb.AppendLine();
 
 			string ns = "";

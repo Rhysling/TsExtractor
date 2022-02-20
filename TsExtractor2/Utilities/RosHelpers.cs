@@ -28,7 +28,7 @@ namespace TsExtractor2.Utilities
 
 				case IdentifierNameSyntax t:
 					tsum.Category = "Named";
-					tsum.TypeName = sym.Name;
+					tsum.TypeName = sym?.Name ?? t.Identifier.Text;
 					tsum.SubType = null;
 					break;
 
@@ -40,7 +40,7 @@ namespace TsExtractor2.Utilities
 
 				case NullableTypeSyntax t:
 					tsum.Category = "Nullable";
-					tsum.TypeName = sym.Name + "/";
+					tsum.TypeName = "Nullable/"; //(sym is not null) ? sym.Name + "/" : "";
 					tsum.SubType = t.ElementType;
 					break;
 
@@ -48,7 +48,7 @@ namespace TsExtractor2.Utilities
 					var a = t.TypeArgumentList.Arguments[0] as IdentifierNameSyntax;
 
 					tsum.Category = "Generic";
-					tsum.TypeName = sym.Name + "/";
+					tsum.TypeName = (sym is not null) ? sym.Name + "/" : "";
 					tsum.SubType = t.TypeArgumentList.Arguments[0];
 					break;
 
