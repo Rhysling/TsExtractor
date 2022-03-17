@@ -45,7 +45,7 @@ namespace TsExtractor2.Utilities
 					break;
 
 				case GenericNameSyntax t:
-					var a = t.TypeArgumentList.Arguments[0] as IdentifierNameSyntax;
+					//var a = t.TypeArgumentList.Arguments[0] as IdentifierNameSyntax;
 
 					tsum.Category = "Generic";
 					tsum.TypeName = (sym is not null) ? sym.Name + "/" : "";
@@ -79,7 +79,16 @@ namespace TsExtractor2.Utilities
 				if (currentNode == null) break;
 
 				if (currentNode is NamespaceDeclarationSyntax ns)
+				{
 					result = ns.Name.ToFullString().TrimEnd('\r', '\n') + "." + result;
+					break;
+				}
+
+				if (currentNode is FileScopedNamespaceDeclarationSyntax fns)
+				{
+					result = fns.Name.ToFullString().TrimEnd('\r', '\n') + "." + result;
+					break;
+				}
 
 			}
 

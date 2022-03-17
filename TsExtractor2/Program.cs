@@ -10,8 +10,8 @@ namespace TsExtractor2
 	{
 		static void Main(string[] args)
 		{
-			RunForProduction(args);
-			//RunForTesting();
+			//RunForProduction(args);
+			RunForTesting();
 		}
 
 
