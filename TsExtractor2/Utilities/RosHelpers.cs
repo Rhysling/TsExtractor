@@ -22,7 +22,7 @@ namespace TsExtractor2.Utilities
 			{
 				case PredefinedTypeSyntax t:
 					tsum.Category = "Predef";
-					tsum.TypeName = sym.Name;
+					tsum.TypeName = sym?.Name ?? t.Keyword.Text;
 					tsum.SubType = null;
 					break;
 

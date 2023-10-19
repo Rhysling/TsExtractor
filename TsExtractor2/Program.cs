@@ -33,8 +33,11 @@ namespace TsExtractor2
 			//string sourcePath = @"D:\UserData\Documents\AppDev\FeederBack\FeederBack.sln";
 			//string[] excludeProjectNames = { "CloudantDb", "FeederBack.Tests", "Logger", "UtilitiesMaster" };
 
-			string sourcePath = @"D:\UserData\Documents\AppDev\TsExtractor2\TsExtractor2.sln";
-			string[] excludeProjectNames = { "TsExtractor2" };
+			string sourcePath = @"D:\UserData\Documents\AppDev\NextSemiBack\NextSemiBack.sln";
+			string[] excludeProjectNames = { "CloudantDb", "FeederBack.Tests", "Logger", "UtilitiesMaster" };
+
+			//string sourcePath = @"D:\UserData\Documents\AppDev\TsExtractor2\TsExtractor2.sln";
+			//string[] excludeProjectNames = { "TsExtractor2" };
 
 
 			string outPath = $@"D:\yy\tp2\Tsx_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
