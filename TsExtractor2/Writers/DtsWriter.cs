@@ -48,6 +48,17 @@ namespace TsExtractor2.Writers
 			var sc = classModels.OrderBy(a => a.NamespaceName).ThenBy(a => a.ClassName).ToList();
 			var tsClassNames = sc.Select(a => a.ClassName).ToList();
 
+			// Pull in any base class properties
+
+			foreach (var c in sc.Where(a => a.HasBaseType))
+			{
+				var bc = sc.Where(a => a.ClassName == c.BaseTypeName).FirstOrDefault();
+				if (bc is not null)
+				{
+					c.PropertyList.AddRange(bc.PropertyList);
+				}
+			}
+
 			foreach (var c in sc)
 			{
 				if (ns != c.NamespaceName)
@@ -57,12 +68,12 @@ namespace TsExtractor2.Writers
 					ns = c.NamespaceName;
 				}
 
-				sb.AppendLine($"interface I{c.ClassName}{(c.HasBaseType ? " extends I" + c.BaseTypeName : "")} {{");
+				sb.AppendLine($"type {c.ClassName} = {{");
 
 				foreach (var p in c.PropertyList)
 					sb.AppendLine($"\t{p.PropName.CamelCase()}: {Mappings.MapPropTypeNamesToTsType(p.PropTypes.FlattenTypeNames(), tsClassNames)};");
 
-				sb.AppendLine("}");
+				sb.AppendLine("};");
 				sb.AppendLine();
 			}
 
