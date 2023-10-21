@@ -17,38 +17,33 @@ namespace TsExtractor2.Operations
 		{
 			vsInstance = MSBuildLocator.QueryVisualStudioInstances().ToArray()[0];
 			MSBuildLocator.RegisterInstance(vsInstance);
-			return $"// Using MSBuild ver. {vsInstance.Version} to load projects.\r\n// Generated - {DateTime.Now.ToString("yyyy/MM/dd-HH:mm:ss")}";
+			return $"// Using MSBuild ver. {vsInstance.Version} to load projects.\r\n// Generated - {DateTime.Now:yyyy/MM/dd-HH:mm:ss}";
 		}
 
 		public static SolutionModel GetCompilations(string sourceFullPath, string[] excludeProjectNames = null)
 		{
 			var sm = new SolutionModel();
-			excludeProjectNames = excludeProjectNames ?? new String[0];
+			excludeProjectNames ??= Array.Empty<string>();
 
 			if (sourceFullPath == null || sourceFullPath.EndsWith(".sln"))
 			{
-				if (sourceFullPath == null)
-					sourceFullPath = Utils.FindSlnPath(AppDomain.CurrentDomain.BaseDirectory, 0);
+				sourceFullPath ??= Utils.FindSlnPath(AppDomain.CurrentDomain.BaseDirectory, 0);
 
-				using (var workspace = MSBuildWorkspace.Create())
-				{
-					var solution = workspace.OpenSolutionAsync(sourceFullPath).Result;
+				using var workspace = MSBuildWorkspace.Create();
+				var solution = workspace.OpenSolutionAsync(sourceFullPath).Result;
 
-					sm.SolutionName = System.IO.Path.GetFileNameWithoutExtension(solution.FilePath);
-					sm.Projects = solution.Projects
-						.Where(a => !excludeProjectNames.Contains(a.Name))
-						.Select(a => new ProjectModel(a.Name, a.GetCompilationAsync().Result))
-						.ToList();
-				}
+				sm.SolutionName = System.IO.Path.GetFileNameWithoutExtension(solution.FilePath);
+				sm.Projects = solution.Projects
+					.Where(a => !excludeProjectNames.Contains(a.Name))
+					.Select(a => new ProjectModel(a.Name, a.GetCompilationAsync().Result))
+					.ToList();
 			}
 			else if (sourceFullPath.EndsWith(".csproj"))
 			{
 				sm.SolutionName = "Single Project";
-				using (var workspace = MSBuildWorkspace.Create())
-				{
-					var project = workspace.OpenProjectAsync(sourceFullPath).Result;
-					sm.Projects = new List<ProjectModel> { new ProjectModel(project.Name, project.GetCompilationAsync().Result) };
-				}
+				using var workspace = MSBuildWorkspace.Create();
+				var project = workspace.OpenProjectAsync(sourceFullPath).Result;
+				sm.Projects = new List<ProjectModel> { new ProjectModel(project.Name, project.GetCompilationAsync().Result) };
 			}
 			else
 			{

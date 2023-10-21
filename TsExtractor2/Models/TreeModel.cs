@@ -11,10 +11,10 @@ namespace TsExtractor2.Models
 {
 	public class TreeModel
 	{
-		private SyntaxTree tree;
-		private SyntaxNode rootNode;
-		private SemanticModel semModel;
-		private string filePath;
+		private readonly SyntaxTree tree;
+		private readonly SyntaxNode rootNode;
+		private readonly SemanticModel semModel;
+		private readonly string filePath;
 		private List<ClassModel> classModels;
 
 		public TreeModel(SyntaxTree tree, Compilation compilation)
@@ -41,22 +41,53 @@ namespace TsExtractor2.Models
 
 			foreach (var c in allClasses)
 			{
+				bool isTypeScriptModel = false;
+				bool isInterface = false;
+				string[] excludedPropList = Array.Empty<string>();
+
+				var atr = c.AttributeLists.SelectMany(a => a.Attributes).FirstOrDefault(b => b.Name.ToString().StartsWith("TypeScriptModel"));
+
+				isTypeScriptModel = atr is not null;
+
+				if (isTypeScriptModel && atr.ArgumentList is not null)
+				{
+					var args = atr.ArgumentList.Arguments.ToList();
+
+					var exclAtr = args.FirstOrDefault(a => a.NameEquals.Name.ToString() == "ExcludeMembersByName");
+					if (exclAtr is not null)
+					{
+						excludedPropList = exclAtr.Expression.ToString().Replace("\"", "").Split(',');
+					}
+
+					var interfaceAtr = args.FirstOrDefault(a => a.NameEquals.Name.ToString() == "IsInterface");
+					if (interfaceAtr is not null)
+					{
+						isInterface = interfaceAtr.Expression.ToString().Replace("\"", "") == "true";
+					}
+					
+				}
+
 				var cl = new ClassModel
 				{
 					FilePath = filePath,
 					ClassName = c.Identifier.ValueText,
 					NamespaceName = RosHelpers.GetNamespaceName(c),
-					IsTypescriptModel = c.AttributeLists.Any(a => a.Attributes.Any(b => b.Name.ToString().StartsWith("TypeScriptModel")))
+					IsTypescriptModel = isTypeScriptModel,
+					IsInterface = isInterface,
+					// Look for base class -- add properties
+					BaseTypeName = ((INamedTypeSymbol)semModel.GetDeclaredSymbol(c)).BaseType?.Name
 				};
-
-				// Look for base class -- add properties
-				cl.BaseTypeName = ((INamedTypeSymbol)semModel.GetDeclaredSymbol(c)).BaseType?.Name;
 
 				var props = c.Members.OfType<PropertyDeclarationSyntax>();
 				cl.PropertyList = props.Select(p => new PropModel {
 					PropName = p.Identifier.ValueText,
 					PropTypes = RosHelpers.GetInfoFromTypeSyntax(semModel, p.Type)
 				}).ToList();
+
+				if (excludedPropList.Any())
+				{
+					cl.PropertyList = cl.PropertyList.Where(a => !excludedPropList.Contains(a.PropName)).ToList();
+				}
 
 				classModels.Add(cl);
 			}

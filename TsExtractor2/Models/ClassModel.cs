@@ -11,6 +11,7 @@ namespace TsExtractor2.Models
 		public bool IsTypescriptModel { get; set; }
 		public string BaseTypeName { get; set; }
 		public bool IsBaseType { get; set; }
+		public bool IsInterface { get; set; } = false;
 		public List<PropModel> PropertyList { get; set; }
 
 		public bool HasBaseType => !String.IsNullOrEmpty(BaseTypeName) && BaseTypeName != "Object" && BaseTypeName != "Attribute" && BaseTypeName != "Record";

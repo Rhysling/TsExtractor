@@ -52,10 +52,13 @@ namespace TsExtractor2.Writers
 
 			foreach (var c in sc.Where(a => a.HasBaseType))
 			{
-				var bc = sc.Where(a => a.ClassName == c.BaseTypeName).FirstOrDefault();
-				if (bc is not null)
+				if (!c.IsInterface)
 				{
-					c.PropertyList.AddRange(bc.PropertyList);
+					var bc = sc.Where(a => a.ClassName == c.BaseTypeName).FirstOrDefault();
+					if (bc is not null)
+					{
+						c.PropertyList.AddRange(bc.PropertyList);
+					}
 				}
 			}
 
@@ -68,12 +71,19 @@ namespace TsExtractor2.Writers
 					ns = c.NamespaceName;
 				}
 
-				sb.AppendLine($"type {c.ClassName} = {{");
+				if (c.IsInterface)
+					sb.AppendLine($"interface I{c.ClassName}{(c.HasBaseType ? " extends I" + c.BaseTypeName : "")} {{");
+				else
+					sb.AppendLine($"type {c.ClassName} = {{");
 
 				foreach (var p in c.PropertyList)
 					sb.AppendLine($"\t{p.PropName.CamelCase()}: {Mappings.MapPropTypeNamesToTsType(p.PropTypes.FlattenTypeNames(), tsClassNames)};");
 
-				sb.AppendLine("};");
+				if (c.IsInterface)
+					sb.AppendLine("}");
+				else
+					sb.AppendLine("};");
+
 				sb.AppendLine();
 			}
 

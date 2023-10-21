@@ -10,8 +10,8 @@ namespace TsExtractor2
 	{
 		static void Main(string[] args)
 		{
-			RunForProduction(args);
-			//RunForTesting();
+			//RunForProduction(args);
+			RunForTesting();
 		}
 
 
@@ -33,14 +33,14 @@ namespace TsExtractor2
 			//string sourcePath = @"D:\UserData\Documents\AppDev\FeederBack\FeederBack.sln";
 			//string[] excludeProjectNames = { "CloudantDb", "FeederBack.Tests", "Logger", "UtilitiesMaster" };
 
-			string sourcePath = @"D:\UserData\Documents\AppDev\NextSemiBack\NextSemiBack.sln";
-			string[] excludeProjectNames = { "CloudantDb", "FeederBack.Tests", "Logger", "UtilitiesMaster" };
+			//string sourcePath = @"D:\UserData\Documents\AppDev\NextSemiBack\NextSemiBack.sln";
+			//string[] excludeProjectNames = { "CloudantDb", "FeederBack.Tests", "Logger", "UtilitiesMaster" };
 
-			//string sourcePath = @"D:\UserData\Documents\AppDev\TsExtractor2\TsExtractor2.sln";
-			//string[] excludeProjectNames = { "TsExtractor2" };
+			string sourcePath = @"D:\UserData\Documents\AppDev\TsExtractor2\TsExtractor2.sln";
+			string[] excludeProjectNames = { "TsExtractor2" };
 
 
-			string outPath = $@"D:\yy\tp2\Tsx_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
+			string outPath = $@"D:\yy\tp2\Tsx_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
 
 
 			// Get compilations from MSB Workspace

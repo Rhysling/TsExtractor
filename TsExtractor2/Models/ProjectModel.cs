@@ -9,9 +9,9 @@ namespace TsExtractor2.Models
 {
 	public class ProjectModel
 	{
-		private string projectName;
-		private Compilation compilation;
-		private List<TreeModel> treeList;
+		private readonly string projectName;
+		private readonly Compilation compilation;
+		private readonly List<TreeModel> treeList;
 
 		public ProjectModel(string projectName, Compilation compilation)
 		{
