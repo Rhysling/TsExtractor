@@ -93,7 +93,7 @@ namespace TsExtractor2.Utilities
 			}
 
 			if (result.Length > 0)
-				return result.Substring(0, result.Length - 1);
+				return result[..^1];
 			else
 				return "No namespace found";
 

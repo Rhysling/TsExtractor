@@ -14,9 +14,9 @@ namespace TsExtractor2.Utilities
 			string result;
 
 			if (inp.StartsWith("_"))
-				result = "_" + ProperCase(inp.Substring(1, inp.Length - 1));
+				result = "_" + ProperCase(inp[1..]);
 			else
-				result = inp.Substring(0, 1).ToUpper() + inp.Substring(1, inp.Length - 1);
+				result = string.Concat(inp[..1].ToUpper(), inp.AsSpan(1, inp.Length - 1));
 
 			return result;
 		}
@@ -31,9 +31,9 @@ namespace TsExtractor2.Utilities
 			string result;
 
 			if (inp.StartsWith("_"))
-				result = "_" + CamelCase(inp.Substring(1, inp.Length - 1));
+				result = "_" + CamelCase(inp[1..]);
 			else
-				result = inp.Substring(0, 1).ToLower() + inp.Substring(1, inp.Length - 1);
+				result = inp[..1].ToLower() + inp[1..];
 
 			return result;
 		}

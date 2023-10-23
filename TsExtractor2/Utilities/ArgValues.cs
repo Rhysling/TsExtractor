@@ -15,7 +15,7 @@ namespace TsExtractor2.Utilities
 			if (args == null || !args.Any()) return;
 
 			argDict = args
-				.Where(a => a.Contains("="))
+				.Where(a => a.Contains('='))
 				.Select(a => a.Split('='))
 				.ToDictionary(k => k[0].ToLower(), v => v[1]);
 		}

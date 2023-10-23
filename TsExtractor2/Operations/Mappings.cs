@@ -5,7 +5,8 @@ namespace TsExtractor2.Operations
 {
 	public static class Mappings
 	{
-		private static readonly Dictionary<string, string> sysToTsTypes = new Dictionary<string, string> {
+		private static readonly Dictionary<string, string> sysToTsTypes = new()
+		{
 			{ "Int32", "number"},
 			{ "Int64", "error-long not supported in js"},
 			{ "Single", "number"},
@@ -19,7 +20,25 @@ namespace TsExtractor2.Operations
 			{ "Boolean", "boolean"}
 		};
 
-		public static string MapPropTypeNamesToTsType(List<string> typeList, List<string> TsClassList)
+		//private static string SysToTsTypes(string sysType)
+		//{
+		//	return sysType switch  {
+		//		"Int32" => "number",
+		//		"Int64" => "error-long not supported in js",
+		//		"Single" => "number",
+		//		"Double" => "number",
+		//		"Decimal" => "number",
+		//		"Byte" => "string",
+		//		"String" => "string",
+		//		"Char" => "string",
+		//		"Guid" => "string",
+		//		"DateTime" => "string",
+		//		"Boolean" => "boolean",
+		//		_ => "any"
+		//	};
+		//}
+
+		public static string MapPropTypeNamesToTsType(List<string> typeList, List<string> tsClassList)
 		{
 			typeList.Reverse();
 			var tq = new Queue<string>(typeList);
@@ -30,7 +49,9 @@ namespace TsExtractor2.Operations
 
 			if (sysToTsTypes.ContainsKey(sysType))
 				tsType = sysToTsTypes[sysType];
-			else if (TsClassList.Contains(sysType))
+			else if (tsClassList.Contains(sysType))
+				tsType = sysType;
+			else if (tsClassList.Contains("I" + sysType))
 				tsType = "I" + sysType;
 			else
 				return "any";

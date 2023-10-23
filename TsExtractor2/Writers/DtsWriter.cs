@@ -46,7 +46,7 @@ namespace TsExtractor2.Writers
 
 			string ns = "";
 			var sc = classModels.OrderBy(a => a.NamespaceName).ThenBy(a => a.ClassName).ToList();
-			var tsClassNames = sc.Select(a => a.ClassName).ToList();
+			var tsClassNames = sc.Select(a => a.TsName).ToList();
 
 			// Pull in any base class properties
 

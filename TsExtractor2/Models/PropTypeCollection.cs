@@ -1,9 +1,5 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TsExtractor2.Models
 {
@@ -19,12 +15,11 @@ namespace TsExtractor2.Models
 
 		public List<string> FlattenTypeNames()
 		{
-			if (flatTypeNames == null)
-				flatTypeNames = extractName(new List<string>(), this);
+			flatTypeNames ??= extractName(new List<string>(), this);
 
 			return flatTypeNames;
 
-			List<string> extractName(List<string> names, PropTypeCollection ts)
+			static List<string> extractName(List<string> names, PropTypeCollection ts)
 			{
 				names.Add(ts.TypeName);
 

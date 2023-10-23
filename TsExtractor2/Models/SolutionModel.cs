@@ -21,10 +21,18 @@ namespace TsExtractor2.Models
 
 				var allClasses = Projects.SelectMany(a => a.ClassList).ToList();
 
-				var baseClassNames = allClasses.Where(a => a.HasBaseType && a.IsTypescriptModel).Select(a => a.BaseTypeName).ToList();
+				var bcl = allClasses.Where(a => a.HasBaseType && a.IsTypescriptModel).Select(a => (a.BaseTypeName, a.IsInterface)).ToList();
 
 				foreach (var c in allClasses)
-					c.IsBaseType = baseClassNames.Contains(c.ClassName);
+				{
+					c.IsBaseType = bcl.Select(a => a.BaseTypeName).Contains(c.ClassName);
+					if (c.IsBaseType)
+					{
+						c.IsInterface = bcl.FirstOrDefault(a => a.BaseTypeName == c.ClassName).IsInterface;
+					}
+
+					c.TsName = c.IsInterface ? "I" + c.ClassName : c.ClassName;
+				}
 
 				tsClasses = allClasses.Where(a => a.IsTypescriptModel || a.IsBaseType).ToList();
 
