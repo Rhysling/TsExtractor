@@ -16,5 +16,7 @@ namespace HowdyWorld.Models
 		public List<string> ValListOfString { get; set; } = new();
 		public List<string>? ValNullableListOfString { get; set; }
 		public List<string?>? ValNullableListOfNullableString { get; set; } = new();
+		public NameValueItem ValNameValueItem { get; set; } = new();
+		public NameValueItem? ValNullableNameValueItem { get; set; }
 	}
 }

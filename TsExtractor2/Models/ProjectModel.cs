@@ -1,30 +1,43 @@
 ﻿using Microsoft.CodeAnalysis;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TsExtractor2.Models
+namespace TsExtractor2.Models;
+
+public class ProjectModel
 {
-	public class ProjectModel
+	private readonly string projectName;
+	private readonly Compilation compilation;
+	private readonly List<TreeModel> treeList;
+
+	public ProjectModel(string projectName, Compilation compilation)
 	{
-		private readonly string projectName;
-		private readonly Compilation compilation;
-		private readonly List<TreeModel> treeList;
+		this.projectName = projectName;
+		this.compilation = compilation;
 
-		public ProjectModel(string projectName, Compilation compilation)
+		treeList = compilation.SyntaxTrees.Select(t => new TreeModel(t, compilation)).ToList();
+	}
+
+	public string ProjectName => projectName;
+	public Compilation Compilation => compilation;
+	public List<TreeModel> TreeList => treeList;
+
+	public List<ClassModel> ClassList
+	{ 
+		get
 		{
-			this.projectName = projectName;
-			this.compilation = compilation;
+			var cl = treeList.SelectMany(t => t.ExtractClassModels()).ToList();
 
-			treeList = compilation.SyntaxTrees.Select(t => new TreeModel(t, compilation)).ToList();
+			// Merge any partial classes
+
+			var clp = cl.Where(a => a.IsTypescriptModel && a.IsPartial);
+
+			foreach (var tp in clp)
+			{
+				tp.PropertyList.AddRange(cl.Where(a => !a.IsTypescriptModel && a.ClassName == tp.ClassName).SelectMany(a => a.PropertyList));
+			}
+
+			return cl;
 		}
-
-		public string ProjectName => projectName;
-		public Compilation Compilation => compilation;
-		public List<TreeModel> TreeList => treeList;
-
-		public List<ClassModel> ClassList => treeList.SelectMany(t => t.ExtractClassModels()).ToList();
 	}
 }

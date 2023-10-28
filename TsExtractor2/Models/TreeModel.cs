@@ -1,98 +1,97 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TsExtractor2.Utilities;
 
-namespace TsExtractor2.Models
+namespace TsExtractor2.Models;
+
+public class TreeModel
 {
-	public class TreeModel
+	private readonly SyntaxTree tree;
+	private readonly SyntaxNode rootNode;
+	private readonly SemanticModel semModel;
+	private readonly string filePath;
+	private List<ClassModel> classModels;
+
+	public TreeModel(SyntaxTree tree, Compilation compilation)
 	{
-		private readonly SyntaxTree tree;
-		private readonly SyntaxNode rootNode;
-		private readonly SemanticModel semModel;
-		private readonly string filePath;
-		private List<ClassModel> classModels;
+		this.tree = tree;
+		semModel = compilation.GetSemanticModel(tree);
+		filePath = tree.FilePath;
+		rootNode = tree.GetRootAsync().Result;
+	}
 
-		public TreeModel(SyntaxTree tree, Compilation compilation)
+	public SyntaxTree Tree => tree;
+	public SyntaxNode RootNode => rootNode;
+	public SemanticModel SemModel => semModel;
+	public string FilePath => filePath;
+
+	public List<ClassModel> ExtractClassModels()
+	{
+		if (classModels != null) return classModels;
+
+		classModels = new List<ClassModel>();
+
+		var allClasses = rootNode.DescendantNodes().OfType<ClassDeclarationSyntax>();
+		//.Where(x => x.AttributeLists.Any(y => y.Attributes.Any(a => a.Name.ToString().StartsWith("TypeScriptModel"))));
+
+		foreach (var c in allClasses)
 		{
-			this.tree = tree;
-			semModel = compilation.GetSemanticModel(tree);
-			filePath = tree.FilePath;
-			rootNode = tree.GetRootAsync().Result;
-		}
+			bool isTypeScriptModel = false;
+			bool isInterface = false;
+			string[] excludedPropList = Array.Empty<string>();
 
-		public SyntaxTree Tree => tree;
-		public SyntaxNode RootNode => rootNode;
-		public SemanticModel SemModel => semModel;
-		public string FilePath => filePath;
+			var atr = c.AttributeLists.SelectMany(a => a.Attributes).FirstOrDefault(b => b.Name.ToString().StartsWith("TypeScriptModel"));
 
-		public List<ClassModel> ExtractClassModels()
-		{
-			if (classModels != null) return classModels;
+			isTypeScriptModel = atr is not null;
 
-			classModels = new List<ClassModel>();
-
-			var allClasses = rootNode.DescendantNodes().OfType<ClassDeclarationSyntax>();
-			//.Where(x => x.AttributeLists.Any(y => y.Attributes.Any(a => a.Name.ToString().StartsWith("TypeScriptModel"))));
-
-			foreach (var c in allClasses)
+			if (isTypeScriptModel && atr.ArgumentList is not null)
 			{
-				bool isTypeScriptModel = false;
-				bool isInterface = false;
-				string[] excludedPropList = Array.Empty<string>();
+				var args = atr.ArgumentList.Arguments.ToList();
 
-				var atr = c.AttributeLists.SelectMany(a => a.Attributes).FirstOrDefault(b => b.Name.ToString().StartsWith("TypeScriptModel"));
-
-				isTypeScriptModel = atr is not null;
-
-				if (isTypeScriptModel && atr.ArgumentList is not null)
+				var exclAtr = args.FirstOrDefault(a => a.NameEquals.Name.ToString() == "ExcludeMembersByName");
+				if (exclAtr is not null)
 				{
-					var args = atr.ArgumentList.Arguments.ToList();
-
-					var exclAtr = args.FirstOrDefault(a => a.NameEquals.Name.ToString() == "ExcludeMembersByName");
-					if (exclAtr is not null)
-					{
-						excludedPropList = exclAtr.Expression.ToString().Replace("\"", "").Split(',');
-					}
-
-					var interfaceAtr = args.FirstOrDefault(a => a.NameEquals.Name.ToString() == "IsInterface");
-					if (interfaceAtr is not null)
-					{
-						isInterface = interfaceAtr.Expression.ToString().Replace("\"", "") == "true";
-					}
-					
+					excludedPropList = exclAtr.Expression.ToString().Replace("\"", "").Split(',');
 				}
 
-				var cl = new ClassModel
+				var interfaceAtr = args.FirstOrDefault(a => a.NameEquals.Name.ToString() == "IsInterface");
+				if (interfaceAtr is not null)
 				{
-					FilePath = filePath,
-					ClassName = c.Identifier.ValueText,
-					NamespaceName = RosHelpers.GetNamespaceName(c),
-					IsTypescriptModel = isTypeScriptModel,
-					IsInterface = isInterface,
-					// Look for base class -- add properties
-					BaseTypeName = ((INamedTypeSymbol)semModel.GetDeclaredSymbol(c)).BaseType?.Name
-				};
-
-				var props = c.Members.OfType<PropertyDeclarationSyntax>();
-				cl.PropertyList = props.Select(p => new PropModel {
-					PropName = p.Identifier.ValueText,
-					PropTypes = RosHelpers.GetInfoFromTypeSyntax(semModel, p.Type)
-				}).ToList();
-
-				if (excludedPropList.Any())
-				{
-					cl.PropertyList = cl.PropertyList.Where(a => !excludedPropList.Contains(a.PropName)).ToList();
+					isInterface = interfaceAtr.Expression.ToString().Replace("\"", "") == "true";
 				}
-
-				classModels.Add(cl);
+				
 			}
 
-			return classModels;
+			var cl = new ClassModel
+			{
+				FilePath = filePath,
+				ClassName = c.Identifier.ValueText,
+				NamespaceName = RosHelpers.GetNamespaceName(c),
+				IsTypescriptModel = isTypeScriptModel,
+				IsInterface = isInterface,
+				IsPartial = c.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)),
+				// Look for base class -- add properties
+				BaseTypeName = ((INamedTypeSymbol)semModel.GetDeclaredSymbol(c)).BaseType?.Name
+			};
+
+			var props = c.Members.OfType<PropertyDeclarationSyntax>();
+			cl.PropertyList = props.Select(p => new PropModel {
+				PropName = p.Identifier.ValueText,
+				PropTypes = RosHelpers.GetInfoFromTypeSyntax(semModel, p.Type)
+			}).ToList();
+
+			if (excludedPropList.Any())
+			{
+				cl.PropertyList = cl.PropertyList.Where(a => !excludedPropList.Contains(a.PropName)).ToList();
+			}
+
+			classModels.Add(cl);
 		}
+
+		return classModels;
 	}
 }
