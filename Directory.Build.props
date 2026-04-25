@@ -1,0 +1,8 @@
+<Project>
+  <ItemGroup>
+    <PackageReference Update="Microsoft.Build.Framework">
+      <ExcludeAssets>runtime</ExcludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

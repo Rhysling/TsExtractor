@@ -17,11 +17,6 @@ namespace TsExtractor2
 
 		static void RunForTesting()
 		{
-			//string projectPath = @"D:\UserData\Documents\Visual Studio 2017\Projects\Crosserator\Crosserator\Crosserator.csproj";
-			//string projectPath = @"D:\UserData\Documents\Visual Studio 2017\Projects\TsExtractor\HowdyWorld\HowdyWorld.csproj";
-			//string solutionPath = @"D:\UserData\Documents\Visual Studio 2017\Projects\TsExtractor\TsExtractor.sln";
-			//string[] projectNames = { "HowdyWorld", "HowdyWorld.Db" };
-
 			// FOR TESTING:
 			//string sourcePath = @"D:\UserData\Documents\Visual Studio 2017\Projects\CrosseratorWebpack\Crosserator.sln";
 			//string outPath = $@"D:\yy\tp2\Tsx_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
@@ -36,13 +31,20 @@ namespace TsExtractor2
 			//string sourcePath = @"D:\UserData\Documents\AppDev\NextSemiBack\NextSemiBack.sln";
 			//string[] excludeProjectNames = { "CloudantDb", "FeederBack.Tests", "Logger", "UtilitiesMaster" };
 
+			//string sourcePath = @"D:\aa-dev\AppDev\TsExtractor2\HowdyWorld\HowdyWorld.csproj";
+
+			string sourcePath = @"D:\aa-dev\AppDev\BotanicaStoreBack\BotanicaStoreBack.sln";
+			string[] excludeProjectNames = ["BotanicaStoreBack.ColorCards", "BotanicaStoreBack.Db", "BotanicaStoreBack.Runner"];
+
+			//string[] excludeProjectNames = [];
+
 			//string sourcePath = @"D:\UserData\Documents\AppDev\TsExtractor2\TsExtractor2.sln";
-			string sourcePath = @"C:\Users\B\Documents\AppDev\TsExtractor2\TsExtractor2.sln";
-			string[] excludeProjectNames = { "TsExtractor2" };
+			//string sourcePath = @"C:\Users\B\Documents\AppDev\TsExtractor2\TsExtractor2.sln";
+			//string[] excludeProjectNames = { "TsExtractor2" };
 
 
 			//string outPath = $@"D:\yy\tp2\Tsx_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
-			string outPath = $@"C:\Users\B\Documents\yy\tp1\Tsx_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+			string outPath = $@"D:\yy-util\tp1\Tsx_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
 
 			// Get compilations from MSB Workspace
 
@@ -62,8 +64,7 @@ namespace TsExtractor2
 		{
 			ArgValues.LoadArgs(args);
 
-			if (ArgValues.OutPath == null)
-				throw new ArgumentNullException("'OutPath' cannot be null.");
+			ArgumentNullException.ThrowIfNull(ArgValues.OutPath);
 
 			// Get compilations from MSB Workspace
 			string header = MsbWorkspace.InitWorkspace();
