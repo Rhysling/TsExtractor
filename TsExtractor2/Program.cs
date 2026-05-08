@@ -10,8 +10,8 @@ namespace TsExtractor2
 	{
 		static void Main(string[] args)
 		{
-			//RunForProduction(args);
-			RunForTesting();
+			RunForProduction(args);
+			//RunForTesting();
 		}
 
 
@@ -62,8 +62,10 @@ namespace TsExtractor2
 
 		static void RunForProduction(string[] args)
 		{
-			ArgValues.LoadArgs(args);
+			ArgValues.LoadFromFile();
+			ArgValues.LoadFromArgs(args);
 
+			ArgumentNullException.ThrowIfNull(ArgValues.SourcePath);
 			ArgumentNullException.ThrowIfNull(ArgValues.OutPath);
 
 			// Get compilations from MSB Workspace

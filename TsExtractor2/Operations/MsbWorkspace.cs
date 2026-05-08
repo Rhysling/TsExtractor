@@ -10,7 +10,7 @@ namespace TsExtractor2.Operations
 {
 	public static class MsbWorkspace
 	{
-		private static VisualStudioInstance vsInstance;
+		private static VisualStudioInstance? vsInstance;
 
 
 		public static string InitWorkspace()
@@ -20,10 +20,10 @@ namespace TsExtractor2.Operations
 			return $"// Using MSBuild ver. {vsInstance.Version} to load projects.\r\n// Generated - {DateTime.Now:yyyy/MM/dd-HH:mm:ss}";
 		}
 
-		public static SolutionModel GetCompilations(string sourceFullPath, string[] excludeProjectNames = null)
+		public static SolutionModel GetCompilations(string sourceFullPath, string[] excludeProjectNames)
 		{
 			var sm = new SolutionModel();
-			excludeProjectNames ??= Array.Empty<string>();
+			excludeProjectNames ??= [];
 
 			if (sourceFullPath == null || sourceFullPath.EndsWith(".sln"))
 			{
@@ -32,10 +32,10 @@ namespace TsExtractor2.Operations
 				using var workspace = MSBuildWorkspace.Create();
 				var solution = workspace.OpenSolutionAsync(sourceFullPath).Result;
 
-				sm.SolutionName = System.IO.Path.GetFileNameWithoutExtension(solution.FilePath);
+				sm.SolutionName = System.IO.Path.GetFileNameWithoutExtension(solution.FilePath)!;
 				sm.Projects = solution.Projects
 					.Where(a => !excludeProjectNames.Contains(a.Name))
-					.Select(a => new ProjectModel(a.Name, a.GetCompilationAsync().Result))
+					.Select(a => new ProjectModel(a.Name, a.GetCompilationAsync().Result!))
 					.ToList();
 			}
 			else if (sourceFullPath.EndsWith(".csproj"))
@@ -43,7 +43,7 @@ namespace TsExtractor2.Operations
 				sm.SolutionName = "Single Project";
 				using var workspace = MSBuildWorkspace.Create();
 				var project = workspace.OpenProjectAsync(sourceFullPath).Result;
-				sm.Projects = new List<ProjectModel> { new ProjectModel(project.Name, project.GetCompilationAsync().Result) };
+				sm.Projects = new List<ProjectModel> { new ProjectModel(project.Name, project.GetCompilationAsync().Result!) };
 			}
 			else
 			{

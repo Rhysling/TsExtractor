@@ -1,0 +1,3 @@
+﻿sourcePath	D:\aa-dev\AppDev\FeederBack\FeederBack.sln
+outPath	D:\yy-util\tp1\Tsx_FeederBack_2.txt
+excludeProjectNames	CloudantDb,FeederBack.Tests,Logger,UtilitiesMaster
