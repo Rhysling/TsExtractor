@@ -6,10 +6,10 @@ namespace TsExtractor2.Models
 {
 	public class SolutionModel
 	{
-		private List<ClassModel> tsClasses;
+		private List<ClassModel>? tsClasses;
 
-		public string SolutionName { get; set; }
-		public List<ProjectModel> Projects { get; set; }
+		public string? SolutionName { get; set; }
+		public List<ProjectModel> Projects { get; set; } = [];
 
 		public List<string> ProjectNames => Projects.Select(a => a.ProjectName).ToList();
 

@@ -1,3 +1,6 @@
-﻿sourcePath	D:\aa-dev\AppDev\FeederBack\FeederBack.sln
-outPath	D:\yy-util\tp1\Tsx_FeederBack_2.txt
+﻿// Now with comments!
+//
+
+sourcePath	D:\aa-dev\AppDev\FeederBack\FeederBack.sln
+outPath	D:\yy-util\tp1\Tsx_FeederBack_4.txt
 excludeProjectNames	CloudantDb,FeederBack.Tests,Logger,UtilitiesMaster

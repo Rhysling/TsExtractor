@@ -12,6 +12,9 @@ namespace TsExtractor2
 		{
 			RunForProduction(args);
 			//RunForTesting();
+
+			Console.WriteLine("Done.");
+			Console.ReadKey();
 		}
 
 

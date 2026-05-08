@@ -1,10 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TsExtractor2.Models;
 
 namespace TsExtractor2.Utilities
@@ -16,7 +11,7 @@ namespace TsExtractor2.Utilities
 			var tsum = new PropTypeCollection();
 
 			//SymbolInfo si;
-			ISymbol sym = semanticModel.GetSymbolInfo(typeSyntax).Symbol;
+			ISymbol sym = semanticModel.GetSymbolInfo(typeSyntax).Symbol!;
 
 			switch (typeSyntax)
 			{
@@ -70,7 +65,7 @@ namespace TsExtractor2.Utilities
 		{
 			// set defaults
 			string result = "";
-			SyntaxNode currentNode = syntaxNode;
+			SyntaxNode? currentNode = syntaxNode;
 			if (currentNode == null) return "Refernce node missing";
 
 			while (true)

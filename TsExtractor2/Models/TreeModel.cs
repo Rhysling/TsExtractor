@@ -14,7 +14,7 @@ public class TreeModel
 	private readonly SyntaxNode rootNode;
 	private readonly SemanticModel semModel;
 	private readonly string filePath;
-	private List<ClassModel> classModels;
+	private List<ClassModel>? classModels;
 
 	public TreeModel(SyntaxTree tree, Compilation compilation)
 	{
@@ -33,7 +33,7 @@ public class TreeModel
 	{
 		if (classModels != null) return classModels;
 
-		classModels = new List<ClassModel>();
+		classModels = [];
 
 		var allClasses = rootNode.DescendantNodes().OfType<ClassDeclarationSyntax>();
 		//.Where(x => x.AttributeLists.Any(y => y.Attributes.Any(a => a.Name.ToString().StartsWith("TypeScriptModel"))));
@@ -42,23 +42,23 @@ public class TreeModel
 		{
 			bool isTypeScriptModel = false;
 			bool isInterface = false;
-			string[] excludedPropList = Array.Empty<string>();
+			string[] excludedPropList = [];
 
 			var atr = c.AttributeLists.SelectMany(a => a.Attributes).FirstOrDefault(b => b.Name.ToString().StartsWith("TypeScriptModel"));
 
 			isTypeScriptModel = atr is not null;
 
-			if (isTypeScriptModel && atr.ArgumentList is not null)
+			if (isTypeScriptModel && atr?.ArgumentList is not null)
 			{
 				var args = atr.ArgumentList.Arguments.ToList();
 
-				var exclAtr = args.FirstOrDefault(a => a.NameEquals.Name.ToString() == "ExcludeMembersByName");
+				var exclAtr = args.FirstOrDefault(a => a.NameEquals?.Name.ToString() == "ExcludeMembersByName");
 				if (exclAtr is not null)
 				{
 					excludedPropList = exclAtr.Expression.ToString().Replace("\"", "").Split(',');
 				}
 
-				var interfaceAtr = args.FirstOrDefault(a => a.NameEquals.Name.ToString() == "IsInterface");
+				var interfaceAtr = args.FirstOrDefault(a => a.NameEquals?.Name.ToString() == "IsInterface");
 				if (interfaceAtr is not null)
 				{
 					isInterface = interfaceAtr.Expression.ToString().Replace("\"", "") == "true";
@@ -75,7 +75,7 @@ public class TreeModel
 				IsInterface = isInterface,
 				IsPartial = c.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)),
 				// Look for base class -- add properties
-				BaseTypeName = ((INamedTypeSymbol)semModel.GetDeclaredSymbol(c)).BaseType?.Name
+				BaseTypeName = semModel.GetDeclaredSymbol(c)?.BaseType?.Name
 			};
 
 			var props = c.Members.OfType<PropertyDeclarationSyntax>();

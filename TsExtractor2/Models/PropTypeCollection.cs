@@ -5,23 +5,23 @@ namespace TsExtractor2.Models
 {
 	public class PropTypeCollection
 	{
-		private List<string> flatTypeNames;
+		private List<string>? flatTypeNames;
 
-		public string PropName { get; set; }
-		public string TypeName { get; set; }
-		public string Category { get; set; }
-		public TypeSyntax SubType { get; set; }
-		public PropTypeCollection SubSummary { get; set; }
+		public string? PropName { get; set; }
+		public string? TypeName { get; set; }
+		public string? Category { get; set; }
+		public TypeSyntax? SubType { get; set; }
+		public PropTypeCollection? SubSummary { get; set; }
 
 		public List<string> FlattenTypeNames()
 		{
-			flatTypeNames ??= extractName(new List<string>(), this);
+			flatTypeNames ??= extractName([], this);
 
 			return flatTypeNames;
 
 			static List<string> extractName(List<string> names, PropTypeCollection ts)
 			{
-				names.Add(ts.TypeName);
+				names.Add(ts.TypeName!);
 
 				if (ts.SubSummary != null)
 					names = extractName(names, ts.SubSummary);

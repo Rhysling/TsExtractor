@@ -23,7 +23,7 @@ namespace TsExtractor2.Writers
 			this.header = header;
 			classModels = solutionModel.TsClasses;
 			projectNames = solutionModel.ProjectNames;
-			solutionName = solutionModel.SolutionName;
+			solutionName = solutionModel.SolutionName!;
 		}
 
 		public void Write()
@@ -46,7 +46,7 @@ namespace TsExtractor2.Writers
 
 			string ns = "";
 			var sc = classModels.OrderBy(a => a.NamespaceName).ThenBy(a => a.ClassName).ToList();
-			var tsClassNames = sc.Select(a => a.TsName).ToList();
+			var tsClassNames = sc.Select(a => a.TsName!).ToList();
 
 			// Pull in any base class properties
 

@@ -2,7 +2,7 @@
 {
 	public class PropModel
 	{
-		public string PropName { get; set; }
-		public PropTypeCollection PropTypes { get; set; }
+		public required string PropName { get; set; }
+		public required PropTypeCollection PropTypes { get; set; }
 	}
 }

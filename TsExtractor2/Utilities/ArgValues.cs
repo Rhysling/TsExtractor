@@ -30,7 +30,7 @@ namespace TsExtractor2.Utilities
 
 			if (String.IsNullOrWhiteSpace(tabDelimArgs)) return;
 
-			string[] lines = tabDelimArgs.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+			string[] lines = [.. tabDelimArgs.Split(separator, StringSplitOptions.RemoveEmptyEntries).Where(a => !a.StartsWith("//") && !String.IsNullOrWhiteSpace(a))];
 
 			foreach (string line in lines)
 			{

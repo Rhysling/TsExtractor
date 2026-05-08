@@ -20,7 +20,7 @@ namespace TsExtractor2.Operations
 			return $"// Using MSBuild ver. {vsInstance.Version} to load projects.\r\n// Generated - {DateTime.Now:yyyy/MM/dd-HH:mm:ss}";
 		}
 
-		public static SolutionModel GetCompilations(string sourceFullPath, string[] excludeProjectNames)
+		public static SolutionModel GetCompilations(string? sourceFullPath, string[] excludeProjectNames)
 		{
 			var sm = new SolutionModel();
 			excludeProjectNames ??= [];
@@ -30,7 +30,7 @@ namespace TsExtractor2.Operations
 				sourceFullPath ??= Utils.FindSlnPath(AppDomain.CurrentDomain.BaseDirectory, 0);
 
 				using var workspace = MSBuildWorkspace.Create();
-				var solution = workspace.OpenSolutionAsync(sourceFullPath).Result;
+				var solution = workspace.OpenSolutionAsync(sourceFullPath!).Result;
 
 				sm.SolutionName = System.IO.Path.GetFileNameWithoutExtension(solution.FilePath)!;
 				sm.Projects = solution.Projects
@@ -43,7 +43,7 @@ namespace TsExtractor2.Operations
 				sm.SolutionName = "Single Project";
 				using var workspace = MSBuildWorkspace.Create();
 				var project = workspace.OpenProjectAsync(sourceFullPath).Result;
-				sm.Projects = new List<ProjectModel> { new ProjectModel(project.Name, project.GetCompilationAsync().Result!) };
+				sm.Projects = [new ProjectModel(project.Name, project.GetCompilationAsync().Result!)];
 			}
 			else
 			{
